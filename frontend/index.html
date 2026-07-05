@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ConversationIQ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #0b1020;
+            color: #e8ecff;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .card {
+            background: #121933;
+            border: 1px solid #263055;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 220px;
+            border-radius: 12px;
+            border: 1px solid #33406d;
+            background: #0d1430;
+            color: #e8ecff;
+            padding: 12px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-size: 14px;
+        }
+
+        button {
+            margin-top: 12px;
+            border: 0;
+            background: #5d78ff;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #0d1430;
+            border: 1px solid #33406d;
+            border-radius: 12px;
+            padding: 14px;
+            overflow-x: auto;
+        }
+
+        .muted {
+            color: #9aa6d6;
+            font-size: 14px;
+        }
+        .pattern {
+    margin-top:20px;
+    padding:15px;
+    border-radius:10px;
+    background:#1a2347;
+    border-left:5px solid #5d78ff;
+}
+
+.pattern h4{
+    margin:0 0 10px 0;
+}
+
+.pattern p{
+    margin:4px 0;
+}
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>ConversationIQ</h1>
+        <p class="muted">Paste a chat, then let the local model analyze tone, emotion, and communication style.</p>
+
+        <div class="card">
+            <textarea id="conversation" placeholder="Paste conversation here..."></textarea>
+            <button id="analyzeBtn" onclick="analyze()">Analyze</button>
+            <p id="status" class="muted"></p>
+        </div>
+
+        <div class="card">
+            <h2>Result</h2>
+            <div id="output"></div>        </div>
+    </div>
+
+    <script>
+        async function analyze() {
+            const btn = document.getElementById("analyzeBtn");
+            const status = document.getElementById("status");
+            const output = document.getElementById("output");
+            const conversation = document.getElementById("conversation").value.trim();
+
+            if (!conversation) {
+                status.textContent = "Paste a conversation first.";
+                return;
+            }
+
+            btn.disabled = true;
+            status.textContent = "Analyzing...";
+            output.textContent = "{}";
+
+            try {
+                const res = await fetch("http://127.0.0.1:8000/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ conversation })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.detail || "Request failed");
+                }
+
+                output.innerHTML = `
+<h3>😊 Emotion</h3>
+<p>${data.emotion}</p>
+
+<h3>🎭 Tone</h3>
+<p>${data.overall_tone}</p>
+
+<h3>💬 Communication Style</h3>
+<p>${data.communication_style}</p>
+
+<h3>📝 Summary</h3>
+<p>${data.summary}</p>
+
+<h3>📌 Patterns</h3>
+
+${data.communication_patterns.map(p => `
+<div class="pattern">
+    <h4>${p.type}</h4>
+    <p><b>Quote:</b> ${p.quote}</p>
+    <p>${p.reason}</p>
+</div>
+`).join("")}
+`;
+                status.textContent = "Done.";
+            } catch (err) {
+                status.textContent = "Error: " + err.message;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
