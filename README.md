@@ -31,8 +31,11 @@ The other person is indirectly acknowledging the speaker's feelings by saying th
 This was a Review on the testing convo:
 
 A: I am so sad.
+
 B: Is it because of me??
+
 A: YES!!
+
 B: Everyone knows you are always like that to me except you agreeing to it.
 
 Feel free to understand the working properly as per uur requirements!!
