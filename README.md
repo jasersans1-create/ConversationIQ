@@ -8,6 +8,7 @@ I fine-tuned Gemma 2B Paramtmeter model for it to review a text between friends 
 
 This was a Review on the testing convo:
 
+```
 A: I am so sad.
 
 B: Is it because of me??
@@ -15,10 +16,12 @@ B: Is it because of me??
 A: YES!!
 
 B: Everyone knows you are always like that to me except you agreeing to it.
+```
 
 Feel free to understand the working properly as per uur requirements!!
 
 ## Result
+```
 Result
 😊 Emotion
 sadness
@@ -42,6 +45,7 @@ validation
 Quote: Everyone knows you are always like that to me except you agreeing to it.
 
 The other person is indirectly acknowledging the speaker's feelings by saying that everyone understands them.
+```
 
 
 
